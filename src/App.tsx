@@ -1,142 +1,123 @@
-import { ConnectWalletButton } from '@/components/ions/connect-wallet-button';
-import { LanguageSelector } from '@/components/ions/language-selector';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { PlusIcon } from 'lucide-react';
-import { Button } from './components/ui/button';
-import { Input } from './components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './components/ui/select';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from './components/ui/tabs';
-import { Textarea } from './components/ui/textarea';
+import { Header } from "@/entities/Dashboard/components/Header";
+import { Search } from "@/entities/Dashboard/components/Search";
+import { Tabs } from "@/entities/Dashboard/components/Tabs";
+import { Footer } from "@/entities/Dashboard/components/Footer";
+
+// Sample data for agents
+const paidAgents = [
+  {
+    id: 1,
+    image: "https://placehold.co/400x300/png?text=AI+Agent+1",
+    title: "Smart Contract Analyzer",
+    description:
+      "Analyzes smart contracts for security vulnerabilities and optimization opportunities.",
+    rating: 4.5,
+    votes: 128,
+  },
+  {
+    id: 2,
+    image: "https://placehold.co/400x300/png?text=AI+Agent+2",
+    title: "DeFi Portfolio Manager",
+    description:
+      "Manages and optimizes DeFi portfolios across multiple chains.",
+    rating: 5,
+    votes: 256,
+  },
+  {
+    id: 3,
+    image: "https://placehold.co/400x300/png?text=AI+Agent+3",
+    title: "NFT Market Analyzer",
+    description: "Provides insights and predictions for NFT markets.",
+    rating: 4,
+    votes: 89,
+  },
+  {
+    id: 4,
+    image: "https://placehold.co/400x300/png?text=AI+Agent+4",
+    title: "Crypto Trading Assistant",
+    description: "AI-powered trading signals and market analysis.",
+    rating: 4.8,
+    votes: 312,
+  },
+];
+
+const otherAgents = [
+  {
+    id: 5,
+    image: "https://placehold.co/400x300/png?text=Free+Agent+1",
+    title: "Gas Fee Calculator",
+    description: "Estimates gas fees across different networks.",
+    rating: 4.2,
+    votes: 156,
+  },
+  {
+    id: 6,
+    image: "https://placehold.co/400x300/png?text=Free+Agent+2",
+    title: "Wallet Tracker",
+    description: "Tracks wallet activities and provides notifications.",
+    rating: 4.6,
+    votes: 203,
+  },
+  {
+    id: 7,
+    image: "https://placehold.co/400x300/png?text=Free+Agent+3",
+    title: "Token Scanner",
+    description: "Scans new tokens for potential risks and opportunities.",
+    rating: 4.3,
+    votes: 167,
+  },
+  {
+    id: 8,
+    image: "https://placehold.co/400x300/png?text=Free+Agent+4",
+    title: "Blockchain Explorer",
+    description: "User-friendly interface for exploring blockchain data.",
+    rating: 4.7,
+    votes: 289,
+  },
+];
 
 export const App = () => {
+  const handleSearch = (value: string) => {
+    console.log("Searching for:", value);
+    // Implement search logic here
+  };
+
   return (
-    <main className="w-full">
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-orange-50 via-white to-orange-50/30">
       {/* Header */}
-      <div className="text-white h-20 border-b border-gray-300 bg-white mx-auto w-full">
-        <div className="flex items-center justify-between h-full max-w-[92.5rem] mx-auto">
-          <div className="flex items-center">
-            <div className="border-2 border-orange-500 w-12 h-12 flex items-center justify-center rounded-full">
-              <img src="/logo.png" alt="Logo" className="w-10 h-10" />
-            </div>
-            <h1 className="text-2xl font-bold font-display ml-3 text-[#e4793c]">ToolMarket</h1>
-          </div>
-          <div className="flex items-center gap-4">
-            {/* Language Selector using Custom Select */}
-            <LanguageSelector />
+      <Header />
 
-            {/* Wallet Connection */}
-            <ConnectWalletButton />
+      {/* Main Content - Enhanced Background */}
+      <main className="flex-1 relative">
+        {/* Subtle background pattern */}
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,_rgba(249,115,22,0.1)_1px,_transparent_0)] bg-[length:24px_24px] opacity-30"></div>
 
-            {/* Create agent */}
-            <Dialog>
-              <DialogTrigger asChild>
-             
-
-            <button className="bg-orange-500 p-1.5 border border-gray-300 rounded-full px-3 
-            flex items-center gap-2 hover:bg-orange-500/70 hover:border-orange-500 transition-all duration-300 
-            cursor-pointer text-white h-10 font-medium
-            ">
-              <PlusIcon className="w-4 h-4" size={16} strokeWidth={2.5} />
-              Create agent
-            </button>
-              </DialogTrigger>
-              <DialogContent> 
-                <DialogHeader>
-                  <DialogTitle>Create agent</DialogTitle>
-                </DialogHeader>
-                <div className="flex flex-col gap-4">
-                  <Input placeholder="Agent image" />
-                  <Input placeholder="Agent name" />
-                  <Input placeholder="Agent description" />
-                  <div className='grid grid-cols-2 gap-4'>
-
-                  <Select>
-                    <SelectTrigger className='w-full'>
-                      <SelectValue placeholder="Select agent type" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="1">Price per use</SelectItem>
-                      <SelectItem value="2">Price per month</SelectItem>
-                    </SelectContent>
-                  </Select>
-
-                  <Input placeholder="Agent price" />
-                  </div>
-                  <Input placeholder="Agent URL" />
-                  <Textarea placeholder="Agent toolcalls" />
-                  <div className='flex justify-end gap-4 mt-4'>
-                    <Button className='bg-orange-500 text-white hover:bg-orange-500/70'>Create agent</Button>
-                  </div>
-                </div>
-              </DialogContent>
-            </Dialog>
-          </div>
-        </div>
-      </div>
-
-      {/* Grid of Cards */}
-      <div className="mx-auto grid grid-cols-1 md:grid-cols-4 gap-4 max-w-[92.5rem] mt-8">
-        {/* Search Input */}
-        <div className="col-span-full mb-4">
-          <input
-            type="text"
-            placeholder="Search for a name"
-            className="w-full p-2 pl-4 border border-neutral-300 rounded-lg h-12"
-          />
-        </div>
-
-        <div>
-          <Tabs>
-            <TabsList>
-              <TabsTrigger value="paid">Paid Agents</TabsTrigger>
-              <TabsTrigger value="unpaid">Other Agents</TabsTrigger>
-            </TabsList>
-            <TabsContent value="paid" className='grid grid-cols-1 md:grid-cols-4 gap-4 mb-8 w-full'> 
-
-
-
-        {[...Array(4)].map((_, index) => (
-          <div key={index} className="border border-gray-300 rounded-lg overflow-hidden">
-            {/* Card Image Banner */}
-            <div className="bg-gray-200 w-full h-48 flex items-center justify-center">
-              <span className="text-black/70">Image {index + 1}</span>
-            </div>
-            <div className="p-4">
-              <h2 className="text-xl font-medium font-display mb-2">Product Title {index + 1}</h2>
-              <p className="text-black/70 mb-4">This is a description of the product. It provides details about the features and benefits.</p>
-              <div className="flex items-center mb-2">
-                <span className="text-yellow-500">★★★★★</span>
-                <span className="ml-2 text-black/70">5 stars</span>
+        <div className="relative px-4 py-6 sm:px-6 sm:py-8 lg:px-8 lg:py-12 max-w-7xl mx-auto">
+          {/* Search Section - Enhanced */}
+          <section className="mb-8 sm:mb-12">
+            <div className="max-w-2xl mx-auto">
+              <div className="text-center mb-6 sm:mb-8">
+                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-3 sm:mb-4">
+                  Discover AI Agents
+                </h1>
+                <p className="text-base sm:text-lg text-gray-600 leading-relaxed">
+                  Find the perfect AI agent for your needs. From smart contracts
+                  to DeFi management.
+                </p>
               </div>
-              <p className="text-black/70">Number of votes: 123</p>
+              <Search onSearch={handleSearch} />
             </div>
-          </div>
-        ))}
-            </TabsContent>
+          </section>
 
-            <TabsContent value="unpaid" className='grid grid-cols-1 md:grid-cols-4 gap-4 mb-8'> 
-
-        {[...Array(4)].map((_, index) => (
-          <div key={index} className="border border-gray-300 rounded-lg overflow-hidden">
-            {/* Card Image Banner */}
-            <div className="bg-gray-200 w-full h-48 flex items-center justify-center">
-              <span className="text-black/70">Image {index + 1}</span>
-            </div>
-            <div className="p-4">
-              <h2 className="text-xl font-medium font-display mb-2">Product Title {index + 1}</h2>
-              <p className="text-black/70 mb-4">This is a description of the product. It provides details about the features and benefits.</p>
-              <div className="flex items-center mb-2">
-                <span className="text-yellow-500">★★★★★</span>
-                <span className="ml-2 text-black/70">5 stars</span>
-              </div>
-              <p className="text-black/70">Number of votes: 123</p>
-            </div>
-          </div>
-        ))}
-            </TabsContent>
-          </Tabs>
+          {/* Tabs Section - Enhanced Container */}
+          <section className="bg-white/60 backdrop-blur-sm rounded-2xl border border-orange-100/50 shadow-lg shadow-orange-500/5 p-6 sm:p-8 lg:p-10">
+            <Tabs paidAgents={paidAgents} otherAgents={otherAgents} />
+          </section>
         </div>
-      </div>
-    </main>
+      </main>
+
+      {/* Footer */}
+      <Footer />
+    </div>
   );
-}
+};

@@ -2,6 +2,10 @@ import { ConnectWalletButton } from '@/components/ions/connect-wallet-button';
 import { LanguageSelector } from '@/components/ions/language-selector';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { PlusIcon } from 'lucide-react';
+import { Button } from './components/ui/button';
+import { Input } from './components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './components/ui/select';
+import { Textarea } from './components/ui/textarea';
 
 export const App = () => {
   return (
@@ -39,7 +43,30 @@ export const App = () => {
                 <DialogHeader>
                   <DialogTitle>Create agent</DialogTitle>
                 </DialogHeader>
-                <div className="flex items-center gap-2"></div>
+                <div className="flex flex-col gap-4">
+                  <Input placeholder="Agent image" />
+                  <Input placeholder="Agent name" />
+                  <Input placeholder="Agent description" />
+                  <div className='grid grid-cols-2 gap-4'>
+
+                  <Select>
+                    <SelectTrigger className='w-full'>
+                      <SelectValue placeholder="Select agent type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="1">Price per use</SelectItem>
+                      <SelectItem value="2">Price per month</SelectItem>
+                    </SelectContent>
+                  </Select>
+
+                  <Input placeholder="Agent price" />
+                  </div>
+                  <Input placeholder="Agent URL" />
+                  <Textarea placeholder="Agent toolcalls" />
+                  <div className='flex justify-end gap-4 mt-4'>
+                    <Button className='bg-orange-500 text-white hover:bg-orange-500/70'>Create agent</Button>
+                  </div>
+                </div>
               </DialogContent>
             </Dialog>
           </div>

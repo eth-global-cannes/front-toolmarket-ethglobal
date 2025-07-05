@@ -5,6 +5,7 @@ import { PlusIcon } from 'lucide-react';
 import { Button } from './components/ui/button';
 import { Input } from './components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './components/ui/select';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from './components/ui/tabs';
 import { Textarea } from './components/ui/textarea';
 
 export const App = () => {
@@ -83,6 +84,17 @@ export const App = () => {
             className="w-full p-2 pl-4 border border-neutral-300 rounded-lg h-12"
           />
         </div>
+
+        <div>
+          <Tabs>
+            <TabsList>
+              <TabsTrigger value="paid">Paid Agents</TabsTrigger>
+              <TabsTrigger value="unpaid">Other Agents</TabsTrigger>
+            </TabsList>
+            <TabsContent value="paid" className='grid grid-cols-1 md:grid-cols-4 gap-4 mb-8 w-full'> 
+
+
+
         {[...Array(4)].map((_, index) => (
           <div key={index} className="border border-gray-300 rounded-lg overflow-hidden">
             {/* Card Image Banner */}
@@ -100,6 +112,30 @@ export const App = () => {
             </div>
           </div>
         ))}
+            </TabsContent>
+
+            <TabsContent value="unpaid" className='grid grid-cols-1 md:grid-cols-4 gap-4 mb-8'> 
+
+        {[...Array(4)].map((_, index) => (
+          <div key={index} className="border border-gray-300 rounded-lg overflow-hidden">
+            {/* Card Image Banner */}
+            <div className="bg-gray-200 w-full h-48 flex items-center justify-center">
+              <span className="text-black/70">Image {index + 1}</span>
+            </div>
+            <div className="p-4">
+              <h2 className="text-xl font-medium font-display mb-2">Product Title {index + 1}</h2>
+              <p className="text-black/70 mb-4">This is a description of the product. It provides details about the features and benefits.</p>
+              <div className="flex items-center mb-2">
+                <span className="text-yellow-500">★★★★★</span>
+                <span className="ml-2 text-black/70">5 stars</span>
+              </div>
+              <p className="text-black/70">Number of votes: 123</p>
+            </div>
+          </div>
+        ))}
+            </TabsContent>
+          </Tabs>
+        </div>
       </div>
     </main>
   );

@@ -4,7 +4,7 @@ export function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white">
+    <footer className="bg-gradient-to-br from-orange-50 via-orange-25 to-white border-t border-orange-100/50 text-gray-800">
       {/* Main Footer Content */}
       <div className="px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20 max-w-7xl mx-auto">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
@@ -19,15 +19,15 @@ export function Footer() {
                 />
               </div>
               <div>
-                <h3 className="text-xl font-bold bg-gradient-to-r from-orange-400 to-orange-500 bg-clip-text text-transparent">
+                <h3 className="text-xl font-bold bg-gradient-to-r from-orange-600 to-orange-700 bg-clip-text text-transparent">
                   ToolMarket
                 </h3>
-                <p className="text-xs text-gray-400 font-medium">
+                <p className="text-xs text-orange-600/80 font-medium">
                   AI Agent Marketplace
                 </p>
               </div>
             </div>
-            <p className="text-sm text-gray-300 leading-relaxed">
+            <p className="text-sm text-gray-600 leading-relaxed">
               The premier marketplace for AI agents. Discover, deploy, and
               monetize intelligent automation solutions.
             </p>
@@ -38,7 +38,7 @@ export function Footer() {
 
           {/* Quick Links - Enhanced */}
           <div className="space-y-4 sm:space-y-6">
-            <h4 className="text-lg font-bold text-white">Quick Links</h4>
+            <h4 className="text-lg font-bold text-gray-900">Quick Links</h4>
             <ul className="space-y-3">
               {[
                 "See my orders",
@@ -49,7 +49,7 @@ export function Footer() {
                 <li key={item}>
                   <a
                     href="#"
-                    className="text-sm text-gray-300 hover:text-orange-400 transition-colors duration-200 flex items-center group"
+                    className="text-sm text-gray-600 hover:text-orange-600 transition-colors duration-200 flex items-center group"
                   >
                     <span className="w-1.5 h-1.5 bg-orange-500 rounded-full mr-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200"></span>
                     {item}
@@ -61,7 +61,7 @@ export function Footer() {
 
           {/* Legal - Enhanced */}
           <div className="space-y-4 sm:space-y-6">
-            <h4 className="text-lg font-bold text-white">Legal</h4>
+            <h4 className="text-lg font-bold text-gray-900">Legal</h4>
             <ul className="space-y-3">
               {[
                 "Privacy Policy",
@@ -72,7 +72,7 @@ export function Footer() {
                 <li key={item}>
                   <a
                     href="#"
-                    className="text-sm text-gray-300 hover:text-orange-400 transition-colors duration-200 flex items-center group"
+                    className="text-sm text-gray-600 hover:text-orange-600 transition-colors duration-200 flex items-center group"
                   >
                     <span className="w-1.5 h-1.5 bg-orange-500 rounded-full mr-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200"></span>
                     {item}
@@ -84,7 +84,7 @@ export function Footer() {
 
           {/* Support - Enhanced */}
           <div className="space-y-4 sm:space-y-6">
-            <h4 className="text-lg font-bold text-white">Support</h4>
+            <h4 className="text-lg font-bold text-gray-900">Support</h4>
             <ul className="space-y-3">
               {[
                 "Help Center",
@@ -95,7 +95,7 @@ export function Footer() {
                 <li key={item}>
                   <a
                     href="#"
-                    className="text-sm text-gray-300 hover:text-orange-400 transition-colors duration-200 flex items-center group"
+                    className="text-sm text-gray-600 hover:text-orange-600 transition-colors duration-200 flex items-center group"
                   >
                     <span className="w-1.5 h-1.5 bg-orange-500 rounded-full mr-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200"></span>
                     {item}
@@ -108,14 +108,14 @@ export function Footer() {
       </div>
 
       {/* Enhanced Divider */}
-      <div className="border-t border-gray-700/50 bg-gradient-to-r from-transparent via-gray-700/30 to-transparent"></div>
+      <div className="border-t border-orange-200/50 bg-gradient-to-r from-transparent via-orange-200/30 to-transparent"></div>
 
       {/* Bottom Section - Enhanced */}
       <div className="px-4 py-6 sm:px-6 sm:py-8 lg:px-8 max-w-7xl mx-auto">
         <div className="flex flex-col sm:flex-row items-center justify-between space-y-4 sm:space-y-0">
           {/* Disclaimer - Enhanced */}
           <div className="text-center sm:text-left">
-            <p className="text-xs text-gray-400 leading-relaxed max-w-md">
+            <p className="text-xs text-gray-500 leading-relaxed max-w-md">
               ToolMarket is not affiliated with Facebook, Inc. or Meta
               Platforms, Inc. We are an independent AI agent marketplace
               platform.
@@ -124,12 +124,12 @@ export function Footer() {
 
           {/* Copyright & Powered by - Enhanced */}
           <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-4 text-center sm:text-right">
-            <p className="text-xs text-gray-400">
+            <p className="text-xs text-gray-500">
               © {currentYear} ToolMarket. All rights reserved.
             </p>
-            <div className="flex items-center space-x-2 px-3 py-1.5 bg-gradient-to-r from-purple-500/10 to-purple-600/10 rounded-full border border-purple-500/20">
-              <div className="w-2 h-2 bg-purple-600 rounded-full animate-pulse"></div>
-              <span className="text-xs text-purple-600 font-medium">
+            <div className="flex items-center space-x-2 px-3 py-1.5 bg-gradient-to-r from-orange-500/10 to-orange-600/10 rounded-full border border-orange-500/20">
+              <div className="w-2 h-2 bg-orange-600 rounded-full animate-pulse"></div>
+              <span className="text-xs text-orange-600 font-medium">
                 Powered by Retix
               </span>
             </div>

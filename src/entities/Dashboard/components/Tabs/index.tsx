@@ -1,22 +1,15 @@
 import { Tabs as TabsRoot, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { TabsContent as TabsContentRoot } from "@/components/ui/tabs";
 import { TabsAgentList } from "./TabsContent";
-
-interface Agent {
-  id: number;
-  image: string;
-  title: string;
-  description: string;
-  rating: number;
-  votes: number;
-}
+import type { Agent } from "@/types/agent";
 
 interface TabsProps {
   paidAgents: Agent[];
   otherAgents: Agent[];
+  onAgentClick?: (agent: Agent) => void;
 }
 
-export function Tabs({ paidAgents, otherAgents }: TabsProps) {
+export function Tabs({ paidAgents, otherAgents, onAgentClick }: TabsProps) {
   return (
     <TabsRoot defaultValue="paid" className="w-full">
       {/* Enhanced Tabs List */}
@@ -75,7 +68,7 @@ export function Tabs({ paidAgents, otherAgents }: TabsProps) {
             </div>
           </div>
 
-          <TabsAgentList agents={paidAgents} />
+          <TabsAgentList agents={paidAgents} onAgentClick={onAgentClick} />
         </TabsContentRoot>
 
         <TabsContentRoot value="other" className="mt-0 space-y-6">
@@ -95,7 +88,7 @@ export function Tabs({ paidAgents, otherAgents }: TabsProps) {
             </div>
           </div>
 
-          <TabsAgentList agents={otherAgents} />
+          <TabsAgentList agents={otherAgents} onAgentClick={onAgentClick} />
         </TabsContentRoot>
       </div>
     </TabsRoot>

@@ -10,6 +10,26 @@ export default defineConfig({
       "@": "/src",
     },
   },
+  build: {
+    // Optimize bundle size
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          // Separate vendor chunks
+          vendor: ["react", "react-dom"],
+          ui: ["lucide-react", "framer-motion"],
+          // Split large libraries
+          utils: ["@/lib/utils", "@/lib/design-system"],
+        },
+      },
+    },
+    // Enable minification
+    minify: "terser",
+    // Optimize chunk size
+    chunkSizeWarningLimit: 1000,
+    // Enable source maps for production debugging
+    sourcemap: false,
+  },
   server: {
     host: true, // Allow external connections
     port: 5173,

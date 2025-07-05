@@ -1,48 +1,17 @@
-import { AgentCard } from "@/entities/Dashboard/components/AgentCard";
+import { AgentCard } from "../../AgentCard";
+import type { Agent } from "@/types/agent";
 
 interface TabsAgentListProps {
-  agents: Array<{
-    id: number;
-    image: string;
-    title: string;
-    description: string;
-    rating: number;
-    votes: number;
-  }>;
+  agents: Agent[];
+  onAgentClick?: (agent: Agent) => void;
 }
 
-export function TabsAgentList({ agents }: TabsAgentListProps) {
+export function TabsAgentList({ agents, onAgentClick }: TabsAgentListProps) {
   return (
-    <div className="w-full">
-      {/* Mobile First Grid - Progressive Enhancement */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3 lg:gap-6 xl:grid-cols-4">
-        {agents.map((agent) => (
-          <AgentCard
-            key={agent.id}
-            image={agent.image}
-            title={agent.title}
-            description={agent.description}
-            rating={agent.rating}
-            votes={agent.votes}
-            onClick={() => console.log(`Clicked agent ${agent.id}`)}
-          />
-        ))}
-      </div>
-
-      {/* Empty State */}
-      {agents.length === 0 && (
-        <div className="flex flex-col items-center justify-center py-12 sm:py-16 lg:py-20">
-          <div className="text-center">
-            <h3 className="text-lg sm:text-xl font-medium text-gray-900 mb-2">
-              No agents found
-            </h3>
-            <p className="text-sm sm:text-base text-gray-500 max-w-sm">
-              Try adjusting your search criteria or check back later for new
-              agents.
-            </p>
-          </div>
-        </div>
-      )}
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
+      {agents.map((agent) => (
+        <AgentCard key={agent.id} agent={agent} onClick={onAgentClick} />
+      ))}
     </div>
   );
 }

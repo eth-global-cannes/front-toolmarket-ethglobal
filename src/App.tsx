@@ -5,14 +5,13 @@ import { PlusIcon } from 'lucide-react';
 
 export const App = () => {
   return (
-    <main className="min-h-screen bg-white">
+    <main className="w-full">
       {/* Header */}
       <div className="text-white h-20 border-b border-gray-300 bg-white mx-auto w-full">
-        <div className="flex items-center justify-between h-full" style={{ maxWidth: '92.5rem', margin: '0 auto' }}>
+        <div className="flex items-center justify-between h-full max-w-[92.5rem] mx-auto">
           <div className="flex items-center">
-            {/* Logo Placeholder */}
             <div className="border-2 border-orange-500 w-12 h-12 flex items-center justify-center rounded-full">
-              {/* <Image src="/logo.png" alt="Logo" width={40} height={40} /> */}
+              <img src="/logo.png" alt="Logo" className="w-10 h-10" />
             </div>
             <h1 className="text-2xl font-bold font-display ml-3 text-[#e4793c]">ToolMarket</h1>
           </div>
@@ -26,11 +25,11 @@ export const App = () => {
             {/* Create agent */}
             <Dialog>
               <DialogTrigger asChild>
-                
+             
 
-            <button className="bg-tm-orange text-white p-1.5 border border-gray-300 rounded-full px-3 
-            flex items-center gap-2 hover:bg-tm-orange/70 hover:text-white hover:border-tm-orange transition-all duration-300 
-            cursor-pointer
+            <button className="bg-orange-500 p-1.5 border border-gray-300 rounded-full px-3 
+            flex items-center gap-2 hover:bg-orange-500/70 hover:border-orange-500 transition-all duration-300 
+            cursor-pointer text-white h-10 font-medium
             ">
               <PlusIcon className="w-4 h-4" size={16} strokeWidth={2.5} />
               Create agent
@@ -40,6 +39,7 @@ export const App = () => {
                 <DialogHeader>
                   <DialogTitle>Create agent</DialogTitle>
                 </DialogHeader>
+                <div className="flex items-center gap-2"></div>
               </DialogContent>
             </Dialog>
           </div>

@@ -22,7 +22,7 @@ export const LanguageSelector = () => {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <button className="text-black flex items-center text-sm font-medium">
+        <button className="text-black flex items-center text-sm font-medium bg-white border border-transparent hover:border-gray-300 rounded-full px-3 py-1.5 cursor-pointer h-10">
           <Flag code={currentLanguage?.code || "US"} className="inline-block mr-2 rounded-sm" width="24" height="24" />
           {currentLanguage?.label}
           <ChevronDown className="ml-2" size={14} />

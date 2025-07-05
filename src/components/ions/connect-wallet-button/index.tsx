@@ -1,6 +1,5 @@
 import { Popover, PopoverContent, PopoverTrigger } from "@radix-ui/react-popover";
-// import { IntMaxClient } from "intmax2-client-sdk";
-import { LogOutIcon, WalletIcon } from "lucide-react";
+import { Loader2, LogOutIcon, WalletIcon } from "lucide-react";
 import { useState } from 'react';
 
 // const client = new IntMaxClient({
@@ -8,28 +7,37 @@ import { useState } from 'react';
 // });
 
 export const ConnectWalletButton = () => {
-  const [user, setUser] = useState(null);
+  const [address, setAddress] = useState<string | null>(localStorage.getItem("@tl-market:address") || null);
+  const [loading, setLoading] = useState(false);
 
   const handleConnect = async () => {
-    await client.login();
+    setLoading(true);
+
+    setTimeout(() => {
+      // setAddress(client.wallet.user.address);
+      setLoading(false);
+      setAddress("0x41754fAc2706221470ef7Fa4028680FCEA14fEd0");
+      localStorage.setItem("@tl-market:address", "0x41754fAc2706221470ef7Fa4028680FCEA14fEd0");
+    }, 4000);
   };
 
   const handleLogout = () => {
     // sdk.wallet.disconnect();
-    setUser(null);
+    setAddress(null);
   };
 
-  if (user) {
+  if (address) {
     return (
       <Popover>
         <PopoverTrigger asChild>
           <button 
-            className="text-gray-500 p-1.5 border border-gray-300 rounded-full px-3 flex items-center gap-2 hover:bg-tm-orange hover:text-white hover:border-tm-orange transition-all duration-300 
-            cursor-pointer
+            className="text-gray-500 p-1.5 rounded-full px-3 flex items-center gap-2 hover:border-neutral-300 border border-transparent transition-all duration-300 
+            cursor-pointer h-10 disabled:opacity-50 disabled:cursor-not-allowed
             "
+            disabled={loading}
           >
             <WalletIcon className="w-4 h-4" size={16} strokeWidth={2.5} />
-            {/* <span className="flex-1 max-w-32 truncate text-ellipsis">{user.wallet?.address}</span> */}
+            <span className="flex-1 max-w-32 truncate text-ellipsis">{address}</span>
           </button>
         </PopoverTrigger>
         <PopoverContent className="bg-white text-black border border-neutral-300 rounded-lg mt-4 w-40 shadow-md" align="start">
@@ -46,6 +54,11 @@ export const ConnectWalletButton = () => {
   }
 
   return (
-    <button className="bg-orange-500 text-white px-4 py-2 rounded-lg" onClick={handleConnect}>Connect Wallet</button>
+    <button className="bg-orange-500 text-white px-4 py-2 h-10 rounded-full flex items-center gap-2 font-medium hover:bg-orange-500/70 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed" onClick={handleConnect}
+    disabled={loading}
+    >
+      {loading ? <Loader2 className="w-4 h-4 animate-spin" size={16} strokeWidth={2.5} /> : <WalletIcon className="w-4 h-4" size={16} strokeWidth={2.5} />}
+      Connect Wallet
+      </button>
   );
 };

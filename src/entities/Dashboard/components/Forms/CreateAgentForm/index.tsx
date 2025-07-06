@@ -43,9 +43,10 @@ interface CreateAgentFormProps {
     url: string;
     endpoints: ApiEndpoint[];
   }) => void;
+  onSuccess?: () => void;
 }
 
-export function CreateAgentForm({ onSubmit }: CreateAgentFormProps) {
+export function CreateAgentForm({ onSubmit, onSuccess }: CreateAgentFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     image: "",
@@ -117,7 +118,26 @@ export function CreateAgentForm({ onSubmit }: CreateAgentFormProps) {
     setIsLoading(true);
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      // Send data to API
+      const response = await fetch(
+        "http://localhost:8000/api/agents/register",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const result = await response.json();
+      console.log("Agent created successfully:", result);
+
+      // Call the onSubmit callback with the form data
       onSubmit(formData);
 
       // Reset form
@@ -137,8 +157,15 @@ export function CreateAgentForm({ onSubmit }: CreateAgentFormProps) {
         ],
       });
       setErrors({});
+
+      // Call the onSuccess callback if provided
+      if (onSuccess) {
+        onSuccess();
+      }
     } catch (error) {
       console.error("Error creating agent:", error);
+      // You might want to show an error message to the user here
+      setErrors({ submit: "Failed to create agent. Please try again." });
     } finally {
       setIsLoading(false);
     }
@@ -149,6 +176,10 @@ export function CreateAgentForm({ onSubmit }: CreateAgentFormProps) {
     // Clear error when user starts typing
     if (errors[field]) {
       setErrors((prev) => ({ ...prev, [field]: "" }));
+    }
+    // Clear submit error when user starts making changes
+    if (errors.submit) {
+      setErrors((prev) => ({ ...prev, submit: "" }));
     }
   };
 
@@ -200,8 +231,41 @@ export function CreateAgentForm({ onSubmit }: CreateAgentFormProps) {
       return;
     }
 
+    // Basic validation to check if it looks like JSON
+    const trimmedInput = jsonString.trim();
+    if (!trimmedInput.startsWith("{") || !trimmedInput.endsWith("}")) {
+      setJsonErrors((prev) => ({
+        ...prev,
+        [endpointId]:
+          "Input must be a valid JSON object (start with { and end with })",
+      }));
+      return;
+    }
+
     try {
       const parsedObject = JSON.parse(jsonString);
+
+      // Check if parsed result is an object (not array, string, number, etc.)
+      if (
+        typeof parsedObject !== "object" ||
+        parsedObject === null ||
+        Array.isArray(parsedObject)
+      ) {
+        setJsonErrors((prev) => ({
+          ...prev,
+          [endpointId]: "Input must be a JSON object with key-value pairs",
+        }));
+        return;
+      }
+
+      // Check if object has any properties
+      if (Object.keys(parsedObject).length === 0) {
+        setJsonErrors((prev) => ({
+          ...prev,
+          [endpointId]: "JSON object cannot be empty",
+        }));
+        return;
+      }
 
       // Convert parsed object to ApiParam array
       const newParams: ApiParam[] = Object.entries(parsedObject).map(
@@ -234,9 +298,26 @@ export function CreateAgentForm({ onSubmit }: CreateAgentFormProps) {
       setShowParams((prev) => ({ ...prev, [endpointId]: true }));
     } catch (error) {
       console.error("Error parsing JSON:", error);
+
+      // Provide more specific error messages based on the error
+      let errorMessage = "Invalid JSON format";
+
+      if (error instanceof SyntaxError) {
+        const errorStr = error.message.toLowerCase();
+        if (errorStr.includes("unexpected token")) {
+          errorMessage =
+            "Invalid JSON syntax. Make sure to use proper JSON format with double quotes around keys and string values.";
+        } else if (errorStr.includes("unexpected end")) {
+          errorMessage =
+            "Incomplete JSON. Make sure all brackets and braces are properly closed.";
+        } else {
+          errorMessage = "JSON syntax error. Please check your formatting.";
+        }
+      }
+
       setJsonErrors((prev) => ({
         ...prev,
-        [endpointId]: "Invalid JSON format",
+        [endpointId]: errorMessage,
       }));
     }
   };
@@ -544,9 +625,13 @@ export function CreateAgentForm({ onSubmit }: CreateAgentFormProps) {
                 <label className="text-xs font-medium text-blue-700 mb-2 block">
                   Paste JSON Object (Optional)
                 </label>
+                <div className="mb-2 p-2 bg-blue-100 rounded text-xs text-blue-600">
+                  <strong>Example:</strong> {"{"}"user_id": "12345", "amount":
+                  100, "slippage": 0.5, "active": true{"}"}
+                </div>
                 <div className="flex gap-2">
                   <Textarea
-                    placeholder='{"user_id": "string", "from_token": "ETH", "to_token": "USDC", "amount": 100, "slippage": 0.5, ...}'
+                    placeholder='{"user_id": "12345", "from_token": "ETH", "to_token": "USDC", "amount": 100, "slippage": 0.5}'
                     value={jsonInputs[endpoint.id] || ""}
                     onChange={(e) =>
                       handleJsonInputChange(endpoint.id, e.target.value)
@@ -693,6 +778,17 @@ export function CreateAgentForm({ onSubmit }: CreateAgentFormProps) {
 
       {/* Submit Button - Enhanced */}
       <div className="pt-4">
+        {errors.submit && (
+          <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+            <p className="text-sm text-red-600 flex items-center space-x-2">
+              <span className="w-4 h-4 bg-red-500 rounded-full flex items-center justify-center">
+                <span className="text-white text-xs">!</span>
+              </span>
+              <span>{errors.submit}</span>
+            </p>
+          </div>
+        )}
+
         <Button
           type="submit"
           disabled={isLoading}

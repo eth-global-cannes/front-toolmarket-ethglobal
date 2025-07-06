@@ -1,5 +1,6 @@
 import type { Agent } from "@/types/agent";
 import { useFlowQuery } from "@onflow/kit";
+import { useNavigate } from "@tanstack/react-router";
 import { Bookmark, CreditCard, Users } from "lucide-react";
 import { useState } from "react";
 import { AgentCard } from "../AgentCard";
@@ -25,8 +26,8 @@ export function TabsWithBookmarks({
   paidAgents,
   otherAgents,
   bookmarkedAgents,
-  onAgentClick,
 }: TabsWithBookmarksProps) {
+  const navigate = useNavigate();
   const { data, isLoading, error, refetch } = useFlowQuery({
     cadence: `
    import "Agents"
@@ -47,7 +48,7 @@ fun main(): &[Agents.Agent] {
     {
       id: "paid",
       label: "All Agents",
-      count: 0,
+      count: agents.length,
       agents: paidAgents,
       icon: CreditCard,
     },
@@ -76,6 +77,13 @@ fun main(): &[Agents.Agent] {
       : baseTabs;
 
   const activeAgents = tabs.find((tab) => tab.id === activeTab)?.agents || [];
+
+  const onAgentClick = () => {
+    navigate({
+      to: "/agents/$agent",
+      params: { agent: "3" },
+    });
+  };
 
   return (
     <div className="w-full">
@@ -181,7 +189,7 @@ fun main(): &[Agents.Agent] {
               <AgentCard
                 key={`${activeTab}-${agent.id}`}
                 agent={agent}
-                onClick={() => onAgentClick(agent)}
+                onClick={onAgentClick}
               />
             ))}
           </div>

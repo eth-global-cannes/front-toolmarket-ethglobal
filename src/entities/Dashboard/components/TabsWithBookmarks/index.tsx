@@ -1,7 +1,8 @@
-import { useState } from "react";
-import { Bookmark, CreditCard, Users } from "lucide-react";
-import { AgentCard } from "../AgentCard";
 import type { Agent } from "@/types/agent";
+import { useFlowQuery } from "@onflow/kit";
+import { Bookmark, CreditCard, Users } from "lucide-react";
+import { useState } from "react";
+import { AgentCard } from "../AgentCard";
 
 interface TabsWithBookmarksProps {
   paidAgents: Agent[];
@@ -26,20 +27,34 @@ export function TabsWithBookmarks({
   bookmarkedAgents,
   onAgentClick,
 }: TabsWithBookmarksProps) {
+  const { data, isLoading, error, refetch } = useFlowQuery({
+    cadence: `
+   import "Agents"
+
+access(all)
+fun main(): &[Agents.Agent] {
+  return Agents.getAgents()
+}
+    `,
+    // args: (arg, t) => [arg(1, t.Int), arg(2, t.Int)],
+    query: { staleTime: 10000 },
+  })
+  console.log(data);
+  const agents = data as Agent[] || [];
   const [activeTab, setActiveTab] = useState<TabId>("paid");
 
   const baseTabs: TabConfig[] = [
     {
       id: "paid",
-      label: "Paid Agents",
-      count: paidAgents.length,
+      label: "All Agents",
+      count: 0,
       agents: paidAgents,
       icon: CreditCard,
     },
     {
       id: "other",
-      label: "Other Agents",
-      count: otherAgents.length,
+      label: "My Agents",
+      count: 0,
       agents: otherAgents,
       icon: Users,
     },
@@ -160,9 +175,9 @@ export function TabsWithBookmarks({
         </div>
 
         {/* Agents Grid */}
-        {activeAgents.length > 0 ? (
+        {agents.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {activeAgents.map((agent) => (
+            {agents.map((agent) => (
               <AgentCard
                 key={`${activeTab}-${agent.id}`}
                 agent={agent}

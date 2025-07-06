@@ -1,15 +1,15 @@
-import { useState, useEffect, Suspense } from "react";
-import { MarketplaceView } from "@/views/MarketplaceView";
-import { LazyAgentDetailsView } from "@/utils/lazy-loading";
-import { ComponentLoader } from "@/utils/lazy-loading";
-import { router, type Route } from "@/utils/router";
 import {
-  usePageMeta,
-  generatePageTitle,
   generateMetaDescription,
+  generatePageTitle,
+  usePageMeta,
 } from "@/hooks/usePageMeta";
 import type { Agent } from "@/types/agent";
-import type { ViewType, RouteState } from "@/types/router";
+import type { RouteState, ViewType } from "@/types/router";
+import { ComponentLoader, LazyAgentDetailsView } from "@/utils/lazy-loading";
+import { router, type Route } from "@/utils/router";
+import { MarketplaceView } from "@/views/MarketplaceView";
+import { Suspense, useEffect, useState } from "react";
+import { WalletAccountProvider } from "./providers/wallet-account";
 
 // Sample data for agents with extended information
 const paidAgents: Agent[] = [
@@ -225,12 +225,14 @@ export const App = () => {
       case "marketplace":
       default:
         return (
+          <WalletAccountProvider>
           <MarketplaceView
             paidAgents={paidAgents}
             otherAgents={otherAgents}
-            onAgentClick={handleAgentClick}
-            onSearch={handleSearch}
-          />
+              onAgentClick={handleAgentClick}
+              onSearch={handleSearch}
+            />
+          </WalletAccountProvider>
         );
     }
   };

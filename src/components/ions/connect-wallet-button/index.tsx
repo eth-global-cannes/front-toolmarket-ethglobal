@@ -17,29 +17,22 @@ fcl.config({
 });
 
 export const ConnectWalletButton = () => {
-  const { authenticate, user } = useFlowCurrentUser();
-  const [address, setAddress] = useState<string | null>(localStorage.getItem("@tl-market:address") || null);
+  const { authenticate, unauthenticate, user } = useFlowCurrentUser();
   const [loading, setLoading] = useState(false);
+
+  console.log(user);
 
   const handleConnect = async () => {
     setLoading(true);
     await authenticate();
     setLoading(false);
-
-    // setTimeout(() => {
-    //   // setAddress(client.wallet.user.address);
-    //   setLoading(false);
-    //   setAddress("0x41754fAc2706221470ef7Fa4028680FCEA14fEd0");
-    //   localStorage.setItem("@tl-market:address", "0x41754fAc2706221470ef7Fa4028680FCEA14fEd0");
-    // }, 4000);
   };
 
   const handleLogout = () => {
-    // sdk.wallet.disconnect();
-    setAddress(null);
+    unauthenticate();
   };
 
-  if (user && false) {
+  if (user?.addr) {
     return (
       <Popover>
         <PopoverTrigger asChild>

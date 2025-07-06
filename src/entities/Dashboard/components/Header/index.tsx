@@ -1,14 +1,6 @@
 import { ConnectWalletButton } from "@/components/ions/connect-wallet-button";
+import { CreateAgentButton } from "@/components/ions/create-agent-button";
 import { LanguageSelector } from "@/components/ions/language-selector";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { PlusIcon } from "lucide-react";
-import { CreateAgentForm } from "../Forms/CreateAgentForm";
 import { useState } from "react";
 
 export function Header() {
@@ -42,7 +34,7 @@ export function Header() {
         <div className="flex items-center justify-between h-16 sm:h-20">
           {/* Logo Section - Enhanced */}
           <div className="flex items-center flex-shrink-0">
-            <div className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl shadow-lg shadow-orange-500/25 flex items-center justify-center">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 border-2 border-orange-500 rounded-xl shadow-lg shadow-orange-500/25 flex items-center justify-center">
               <img
                 src="/logo.png"
                 alt="ToolMarket Logo"
@@ -70,43 +62,7 @@ export function Header() {
             <ConnectWalletButton />
 
             {/* Create Agent Button - Enhanced */}
-            <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-              <DialogTrigger asChild>
-                <button
-                  className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 
-                  text-white rounded-xl shadow-lg shadow-orange-500/25 hover:shadow-orange-500/40
-                  p-2 sm:px-4 sm:py-2.5 lg:px-5 lg:py-3 
-                  flex items-center space-x-1 sm:space-x-2 
-                  transition-all duration-200 ease-out transform hover:scale-105 active:scale-95
-                  focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 focus:ring-offset-white"
-                  aria-label="Create new agent"
-                >
-                  <PlusIcon
-                    className="w-4 h-4 sm:w-5 sm:h-5"
-                    strokeWidth={2.5}
-                  />
-                  <span className="hidden sm:inline text-sm lg:text-base font-semibold">
-                    Create Agent
-                  </span>
-                </button>
-              </DialogTrigger>
-              <DialogContent className="w-[95vw] max-w-lg mx-auto max-h-[90vh] p-0 m-4 bg-white border border-orange-100 shadow-2xl shadow-orange-500/10">
-                <DialogHeader className="p-4 sm:p-6 pb-2 sm:pb-4 bg-gradient-to-r from-orange-50 to-orange-50/50 border-b border-orange-100">
-                  <DialogTitle className="text-lg sm:text-xl font-bold text-gray-900">
-                    Create New Agent
-                  </DialogTitle>
-                  <p className="text-sm text-gray-600 mt-1">
-                    Fill in the details to create your AI agent
-                  </p>
-                </DialogHeader>
-                <div className="px-4 pb-4 sm:px-6 sm:pb-6 max-h-[60vh] sm:max-h-[70vh] overflow-y-auto custom-scrollbar">
-                  <CreateAgentForm
-                    onSubmit={handleCreateAgent}
-                    onSuccess={() => setIsModalOpen(false)}
-                  />
-                </div>
-              </DialogContent>
-            </Dialog>
+            <CreateAgentButton handleCreateAgent={handleCreateAgent} />
           </div>
         </div>
       </div>

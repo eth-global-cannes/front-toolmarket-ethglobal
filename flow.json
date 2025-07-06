@@ -15,17 +15,17 @@
 	},
 	"accounts": {
 		"emulator-account": {
-			"address": "38368e9101b8fa59",
+			"address": "d2ee1c993a86d635",
 			"key": {
 				"type": "file",
-				"location": "troccoliagent003.pkey"
+				"location": "troccoli.agents004.pkey"
 			}
 		},
-		"troccoliagent003": {
-			"address": "38368e9101b8fa59",
+		"troccoli.agents004": {
+			"address": "d2ee1c993a86d635",
 			"key": {
 				"type": "file",
-				"location": "troccoliagent003.pkey"
+				"location": "troccoli.agents004.pkey"
 			}
 		}
 	},

@@ -1,8 +1,8 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { Star } from "lucide-react";
-import { motion } from "framer-motion";
 import { OptimizedImage } from "@/components/ui/optimized-image";
 import type { Agent } from "@/types/agent";
+import { motion } from "framer-motion";
+import { Star } from "lucide-react";
 
 interface AgentCardProps {
   agent: Agent;
@@ -29,7 +29,7 @@ export function AgentCard({ agent, onClick }: AgentCardProps) {
         focus-within:ring-2 focus-within:ring-orange-500 focus-within:ring-offset-2"
         role="button"
         tabIndex={0}
-        aria-label={`View details for ${agent.title}`}
+        aria-label={`View details for ${agent.name}`}
         onKeyDown={(e) => {
           if (e.key === "Enter" || e.key === " ") {
             e.preventDefault();
@@ -40,9 +40,10 @@ export function AgentCard({ agent, onClick }: AgentCardProps) {
         <CardContent className="p-0">
           {/* Image Section - Enhanced */}
           <div className="relative w-full h-40 sm:h-44 lg:h-48 overflow-hidden bg-gradient-to-br from-orange-50 to-orange-100/50">
+
             <OptimizedImage
-              src={agent.image}
-              alt={agent.title}
+              src={agent.imageUrl}
+              alt={agent.name}
               width={400}
               height={300}
               className="w-full h-full group-hover:scale-110 transition-transform duration-500 ease-out"
@@ -51,35 +52,36 @@ export function AgentCard({ agent, onClick }: AgentCardProps) {
             {/* Gradient overlay */}
             <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
 
+
             {/* Rating badge */}
             <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm rounded-full px-2 py-1 flex items-center space-x-1 shadow-lg">
               <Star className="w-3 h-3 text-yellow-500 fill-yellow-500" />
               <span className="text-xs font-semibold text-gray-800">
-                {agent.rating}
+                {agent.note}
               </span>
             </div>
 
             {/* Owned badge */}
-            {agent.isPurchased && (
+            {/* {agent.isPurchased && (
               <div className="absolute top-3 left-3 bg-green-500 text-white rounded-full px-2 py-1 flex items-center space-x-1 shadow-lg">
                 <div className="w-2 h-2 bg-white rounded-full"></div>
                 <span className="text-xs font-semibold">Owned</span>
               </div>
-            )}
+            )} */}
 
             {/* Price badge for non-purchased agents */}
-            {!agent.isPurchased && agent.price && agent.price !== "0" && (
+            {/* {!agent.isPurchased && agent.price && agent.price !== "0" && (
               <div className="absolute bottom-3 right-3 bg-orange-500 text-white rounded-full px-2 py-1 shadow-lg">
                 <span className="text-xs font-semibold">${agent.price}</span>
               </div>
-            )}
+            )} */}
           </div>
 
           {/* Content Section - Enhanced */}
           <div className="p-4 sm:p-5 lg:p-6">
             {/* Title */}
             <h3 className="text-base sm:text-lg lg:text-xl font-bold text-gray-900 mb-2 line-clamp-1 group-hover:text-orange-600 transition-colors duration-200">
-              {agent.title}
+              {agent.name}
             </h3>
 
             {/* Description */}
@@ -93,13 +95,13 @@ export function AgentCard({ agent, onClick }: AgentCardProps) {
               <div className="flex items-center space-x-1">
                 <div
                   className="flex items-center"
-                  aria-label={`Rating: ${agent.rating} out of 5 stars`}
+                  aria-label={`Rating: ${agent.note} out of 5 stars`}
                 >
                   {[...Array(5)].map((_, index) => (
                     <Star
                       key={index}
                       className={`w-3 h-3 sm:w-4 sm:h-4 ${
-                        index < Math.floor(agent.rating)
+                        index < Math.floor(agent.note)
                           ? "text-yellow-500 fill-yellow-500"
                           : "text-gray-300 fill-gray-300"
                       }`}
@@ -107,18 +109,18 @@ export function AgentCard({ agent, onClick }: AgentCardProps) {
                   ))}
                 </div>
                 <span className="text-xs sm:text-sm text-gray-500 font-medium ml-1">
-                  ({agent.votes})
+                  ({agent.note})
                 </span>
               </div>
 
               {/* Action indicator */}
-              <div className="text-xs font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+              {/* <div className="text-xs font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                 {agent.isPurchased ? (
                   <span className="text-green-600">Run Agent →</span>
                 ) : (
                   <span className="text-orange-600">Buy Agent →</span>
                 )}
-              </div>
+              </div> */}
             </div>
           </div>
         </CardContent>

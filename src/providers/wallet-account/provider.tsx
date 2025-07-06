@@ -1,6 +1,6 @@
 import { FlowProvider } from "@onflow/kit";
-import flow from "flow.json";
 import { createContext, useState } from "react";
+import flow from "../../../flow.json";
 
 export const WalletAccountContext = createContext<{
   address: string | null;

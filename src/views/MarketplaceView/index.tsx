@@ -1,9 +1,10 @@
-import { Suspense } from "react";
+import { Suspense, useState, useEffect } from "react";
 import { Header } from "@/entities/Dashboard/components/Header";
 import { Search } from "@/entities/Dashboard/components/Search";
-import { Tabs } from "@/entities/Dashboard/components/Tabs";
+import { TabsWithBookmarks } from "@/entities/Dashboard/components/TabsWithBookmarks";
 import { LazyFooter, ComponentLoader } from "@/utils/lazy-loading";
 import { SkipLink } from "@/components/ui/skip-link";
+import { getBookmarkedAgents, bookmarkToAgent } from "@/utils/bookmarks";
 import type { Agent } from "@/types/agent";
 
 interface MarketplaceViewProps {
@@ -19,6 +20,27 @@ export function MarketplaceView({
   onAgentClick,
   onSearch,
 }: MarketplaceViewProps) {
+  const [bookmarkedAgents, setBookmarkedAgents] = useState<Agent[]>([]);
+
+  // Load bookmarked agents from localStorage
+  useEffect(() => {
+    const bookmarks = getBookmarkedAgents();
+    const agents = bookmarks.map(bookmarkToAgent);
+    setBookmarkedAgents(agents);
+  }, []);
+
+  // Listen for bookmark changes (when returning from detail view)
+  useEffect(() => {
+    const handleFocus = () => {
+      const bookmarks = getBookmarkedAgents();
+      const agents = bookmarks.map(bookmarkToAgent);
+      setBookmarkedAgents(agents);
+    };
+
+    window.addEventListener("focus", handleFocus);
+    return () => window.removeEventListener("focus", handleFocus);
+  }, []);
+
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-orange-50 via-white to-orange-50/30">
       {/* Skip Link for Accessibility */}
@@ -51,9 +73,10 @@ export function MarketplaceView({
 
           {/* Tabs Section - Enhanced Container */}
           <section className="bg-white/60 backdrop-blur-sm rounded-2xl border border-orange-100/50 shadow-lg shadow-orange-500/5 p-6 sm:p-8 lg:p-10">
-            <Tabs
+            <TabsWithBookmarks
               paidAgents={paidAgents}
               otherAgents={otherAgents}
+              bookmarkedAgents={bookmarkedAgents}
               onAgentClick={onAgentClick}
             />
           </section>

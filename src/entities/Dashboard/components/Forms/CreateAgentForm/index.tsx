@@ -9,7 +9,29 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Loader2, Upload, DollarSign, Link, Code } from "lucide-react";
+import {
+  Loader2,
+  Upload,
+  DollarSign,
+  Link,
+  Code,
+  Plus,
+  Trash2,
+  Sparkles,
+} from "lucide-react";
+
+interface ApiParam {
+  id: string;
+  key: string;
+  value: string;
+  type: "string" | "number" | "boolean";
+}
+
+interface ApiEndpoint {
+  id: string;
+  endpoint: string;
+  apiParams: ApiParam[];
+}
 
 interface CreateAgentFormProps {
   onSubmit: (data: {
@@ -19,7 +41,7 @@ interface CreateAgentFormProps {
     type: string;
     price: string;
     url: string;
-    toolcalls: string;
+    endpoints: ApiEndpoint[];
   }) => void;
 }
 
@@ -32,10 +54,19 @@ export function CreateAgentForm({ onSubmit }: CreateAgentFormProps) {
     type: "",
     price: "",
     url: "",
-    toolcalls: "",
+    endpoints: [
+      {
+        id: "1",
+        endpoint: "/",
+        apiParams: [] as ApiParam[],
+      },
+    ],
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [jsonInputs, setJsonInputs] = useState<Record<string, string>>({});
+  const [jsonErrors, setJsonErrors] = useState<Record<string, string>>({});
+  const [showParams, setShowParams] = useState<Record<string, boolean>>({});
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
@@ -62,8 +93,14 @@ export function CreateAgentForm({ onSubmit }: CreateAgentFormProps) {
       newErrors.url = "Agent URL is required";
     }
 
-    if (!formData.toolcalls.trim()) {
-      newErrors.toolcalls = "Tool calls are required";
+    if (formData.endpoints.length === 0) {
+      newErrors.endpoints = "At least one endpoint is required";
+    } else {
+      formData.endpoints.forEach((endpoint, index) => {
+        if (!endpoint.endpoint.trim()) {
+          newErrors[`endpoint_${index}`] = "Endpoint is required";
+        }
+      });
     }
 
     setErrors(newErrors);
@@ -91,7 +128,13 @@ export function CreateAgentForm({ onSubmit }: CreateAgentFormProps) {
         type: "",
         price: "",
         url: "",
-        toolcalls: "",
+        endpoints: [
+          {
+            id: "1",
+            endpoint: "/",
+            apiParams: [],
+          },
+        ],
       });
       setErrors({});
     } catch (error) {
@@ -107,6 +150,150 @@ export function CreateAgentForm({ onSubmit }: CreateAgentFormProps) {
     if (errors[field]) {
       setErrors((prev) => ({ ...prev, [field]: "" }));
     }
+  };
+
+  const handleEndpointChange = (endpointId: string, value: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      endpoints: prev.endpoints.map((endpoint) =>
+        endpoint.id === endpointId ? { ...endpoint, endpoint: value } : endpoint
+      ),
+    }));
+  };
+
+  const addEndpoint = () => {
+    const newEndpoint: ApiEndpoint = {
+      id: Date.now().toString(),
+      endpoint: "/",
+      apiParams: [],
+    };
+
+    setFormData((prev) => ({
+      ...prev,
+      endpoints: [...prev.endpoints, newEndpoint],
+    }));
+  };
+
+  const removeEndpoint = (endpointId: string) => {
+    if (formData.endpoints.length > 1) {
+      setFormData((prev) => ({
+        ...prev,
+        endpoints: prev.endpoints.filter(
+          (endpoint) => endpoint.id !== endpointId
+        ),
+      }));
+    }
+  };
+
+  const handleJsonInputChange = (endpointId: string, value: string) => {
+    setJsonInputs((prev) => ({ ...prev, [endpointId]: value }));
+    // Clear error when user starts typing
+    if (jsonErrors[endpointId]) {
+      setJsonErrors((prev) => ({ ...prev, [endpointId]: "" }));
+    }
+  };
+
+  const parseJsonToParams = (endpointId: string) => {
+    const jsonString = jsonInputs[endpointId] || "";
+    if (!jsonString.trim()) {
+      setJsonErrors((prev) => ({ ...prev, [endpointId]: "JSON is required" }));
+      return;
+    }
+
+    try {
+      const parsedObject = JSON.parse(jsonString);
+
+      // Convert parsed object to ApiParam array
+      const newParams: ApiParam[] = Object.entries(parsedObject).map(
+        ([key, value]) => ({
+          id: key,
+          key: key,
+          value: String(value),
+          type:
+            typeof value === "number"
+              ? "number"
+              : typeof value === "boolean"
+              ? "boolean"
+              : "string",
+        })
+      );
+
+      setFormData((prev) => ({
+        ...prev,
+        endpoints: prev.endpoints.map((endpoint) =>
+          endpoint.id === endpointId
+            ? { ...endpoint, apiParams: newParams }
+            : endpoint
+        ),
+      }));
+
+      // Clear JSON input and error after successful parsing
+      setJsonInputs((prev) => ({ ...prev, [endpointId]: "" }));
+      setJsonErrors((prev) => ({ ...prev, [endpointId]: "" }));
+      // Show parameters section for this endpoint
+      setShowParams((prev) => ({ ...prev, [endpointId]: true }));
+    } catch (error) {
+      console.error("Error parsing JSON:", error);
+      setJsonErrors((prev) => ({
+        ...prev,
+        [endpointId]: "Invalid JSON format",
+      }));
+    }
+  };
+
+  const addApiParam = (endpointId: string) => {
+    const newParam: ApiParam = {
+      id: Date.now().toString(),
+      key: "",
+      value: "",
+      type: "string",
+    };
+
+    setFormData((prev) => ({
+      ...prev,
+      endpoints: prev.endpoints.map((endpoint) =>
+        endpoint.id === endpointId
+          ? { ...endpoint, apiParams: [...endpoint.apiParams, newParam] }
+          : endpoint
+      ),
+    }));
+  };
+
+  const removeApiParam = (endpointId: string, paramId: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      endpoints: prev.endpoints.map((endpoint) =>
+        endpoint.id === endpointId
+          ? {
+              ...endpoint,
+              apiParams: endpoint.apiParams.filter(
+                (param) => param.id !== paramId
+              ),
+            }
+          : endpoint
+      ),
+    }));
+  };
+
+  const updateApiParam = (
+    endpointId: string,
+    paramId: string,
+    field: keyof ApiParam,
+    value: string
+  ) => {
+    setFormData((prev) => ({
+      ...prev,
+      endpoints: prev.endpoints.map((endpoint) =>
+        endpoint.id === endpointId
+          ? {
+              ...endpoint,
+              apiParams: endpoint.apiParams.map((param) =>
+                param.id === paramId ? { ...param, [field]: value } : param
+              ),
+            }
+          : endpoint
+      ),
+    }));
   };
 
   return (
@@ -277,28 +464,231 @@ export function CreateAgentForm({ onSubmit }: CreateAgentFormProps) {
         )}
       </div>
 
-      {/* Tool Calls Field - Enhanced */}
-      <div className="space-y-2">
-        <label className="flex items-center space-x-2 text-sm font-semibold text-gray-700">
-          <Code className="w-4 h-4 text-orange-500" />
-          <span>Tool Calls *</span>
-        </label>
-        <Textarea
-          placeholder="Describe the tool calls your agent supports..."
-          value={formData.toolcalls}
-          onChange={(e) => handleInputChange("toolcalls", e.target.value)}
-          className={`min-h-[80px] rounded-xl transition-all duration-200 ${
-            errors.toolcalls
-              ? "border-red-300 focus:border-red-500 focus:ring-red-500"
-              : "border-gray-200 focus:border-orange-500 focus:ring-orange-500"
-          }`}
-        />
-        {errors.toolcalls && (
-          <p className="text-xs text-red-600 flex items-center space-x-1">
-            <span className="w-3 h-3 bg-red-500 rounded-full"></span>
-            <span>{errors.toolcalls}</span>
-          </p>
-        )}
+      {/* API Endpoints Section */}
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <label className="flex items-center space-x-2 text-sm font-semibold text-gray-700">
+            <Code className="w-4 h-4 text-orange-500" />
+            <span>API Endpoints *</span>
+          </label>
+          <Button
+            type="button"
+            onClick={addEndpoint}
+            className="h-9 px-4 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 
+            text-white rounded-lg text-sm font-medium flex items-center space-x-2 shadow-sm hover:shadow-md
+            transition-all duration-200 ease-out transform hover:scale-[1.02] active:scale-[0.98]
+            focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 cursor-pointer"
+          >
+            <Plus className="w-4 h-4" />
+            <span>Add Endpoint</span>
+          </Button>
+        </div>
+
+        {formData.endpoints.map((endpoint, index) => (
+          <div
+            key={endpoint.id}
+            className="border border-gray-200 rounded-xl p-4 bg-white"
+          >
+            <div className="flex items-center justify-between mb-4">
+              <h4 className="text-sm font-medium text-gray-700">
+                Endpoint {index + 1}
+              </h4>
+              {formData.endpoints.length > 1 && (
+                <Button
+                  type="button"
+                  onClick={() => removeEndpoint(endpoint.id)}
+                  className="h-8 w-8 p-0 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 
+                  text-white rounded-lg flex items-center justify-center shadow-sm hover:shadow-md
+                  transition-all duration-200 ease-out transform hover:scale-[1.05] active:scale-[0.95]
+                  focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 cursor-pointer"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </Button>
+              )}
+            </div>
+
+            {/* Endpoint Path */}
+            <div className="space-y-2 mb-4">
+              <label className="text-xs font-medium text-gray-600">
+                Endpoint Path
+              </label>
+              <Input
+                type="text"
+                placeholder="/swap"
+                value={endpoint.endpoint}
+                onChange={(e) =>
+                  handleEndpointChange(endpoint.id, e.target.value)
+                }
+                className={`h-9 text-sm rounded-lg transition-all duration-200 ${
+                  errors[`endpoint_${index}`]
+                    ? "border-red-300 focus:border-red-500 focus:ring-red-500"
+                    : "border-gray-300 focus:border-orange-500 focus:ring-orange-500"
+                }`}
+              />
+              {errors[`endpoint_${index}`] && (
+                <p className="text-xs text-red-600 flex items-center space-x-1">
+                  <span className="w-3 h-3 bg-red-500 rounded-full"></span>
+                  <span>{errors[`endpoint_${index}`]}</span>
+                </p>
+              )}
+            </div>
+
+            {/* API Parameters */}
+            <div className="space-y-3">
+              <label className="text-xs font-medium text-gray-600">
+                API Parameters
+              </label>
+
+              {/* JSON Input Section */}
+              <div className="p-3 bg-blue-50 rounded-lg border border-blue-200">
+                <label className="text-xs font-medium text-blue-700 mb-2 block">
+                  Paste JSON Object (Optional)
+                </label>
+                <div className="flex gap-2">
+                  <Textarea
+                    placeholder='{"user_id": "string", "from_token": "ETH", "to_token": "USDC", "amount": 100, "slippage": 0.5, ...}'
+                    value={jsonInputs[endpoint.id] || ""}
+                    onChange={(e) =>
+                      handleJsonInputChange(endpoint.id, e.target.value)
+                    }
+                    className="flex-1 min-h-[60px] text-xs rounded-lg border-blue-300 focus:border-blue-500 focus:ring-blue-500"
+                  />
+                  <Button
+                    type="button"
+                    onClick={() => parseJsonToParams(endpoint.id)}
+                    className="h-fit px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 
+                    text-white rounded-lg text-sm font-medium shadow-md hover:shadow-lg
+                    transition-all duration-200 ease-out transform hover:scale-[1.02] active:scale-[0.98]
+                    focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 cursor-pointer
+                    relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-r before:from-white/10 before:to-transparent before:opacity-0 hover:before:opacity-100 before:transition-opacity before:duration-200"
+                  >
+                    Parse JSON
+                  </Button>
+                </div>
+                {jsonErrors[endpoint.id] && (
+                  <p className="text-xs text-red-600 mt-1 flex items-center space-x-1">
+                    <span className="w-3 h-3 bg-red-500 rounded-full"></span>
+                    <span>{jsonErrors[endpoint.id]}</span>
+                  </p>
+                )}
+              </div>
+
+              {/* Manual Add Button */}
+              <div className="flex justify-center">
+                <Button
+                  type="button"
+                  onClick={() => addApiParam(endpoint.id)}
+                  className="px-6 py-3 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 
+                  text-white rounded-lg text-sm font-medium flex items-center space-x-2 shadow-md hover:shadow-lg
+                  transition-all duration-200 ease-out transform hover:scale-[1.02] active:scale-[0.98]
+                  focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 cursor-pointer
+                  relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-r before:from-white/10 before:to-transparent before:opacity-0 hover:before:opacity-100 before:transition-opacity before:duration-200"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Add Parameter Manually</span>
+                </Button>
+              </div>
+
+              {(showParams[endpoint.id] || endpoint.apiParams.length > 0) && (
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <label className="text-xs font-medium text-gray-600">
+                      Manual Parameters
+                    </label>
+                    <Button
+                      type="button"
+                      onClick={() => addApiParam(endpoint.id)}
+                      className="h-8 px-3 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 
+                      text-white rounded-lg text-sm font-medium flex items-center space-x-2 shadow-sm hover:shadow-md
+                      transition-all duration-200 ease-out transform hover:scale-[1.02] active:scale-[0.98]
+                      focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 cursor-pointer"
+                    >
+                      <Plus className="w-4 h-4" />
+                      <span>Add Param</span>
+                    </Button>
+                  </div>
+
+                  <div className="space-y-2 p-3 bg-gray-50 rounded-lg border border-gray-200">
+                    {endpoint.apiParams.map((param) => (
+                      <div
+                        key={param.id}
+                        className="flex items-center gap-2 p-2 bg-white rounded-lg border border-gray-200"
+                      >
+                        <div className="flex-1 grid grid-cols-1 sm:grid-cols-3 gap-2">
+                          <Input
+                            type="text"
+                            placeholder="Key"
+                            value={param.key}
+                            onChange={(e) =>
+                              updateApiParam(
+                                endpoint.id,
+                                param.id,
+                                "key",
+                                e.target.value
+                              )
+                            }
+                            className="h-8 text-xs rounded-lg border-gray-300 focus:border-orange-500 focus:ring-orange-500"
+                          />
+                          <Input
+                            type={param.type === "number" ? "number" : "text"}
+                            placeholder="Value"
+                            value={param.value}
+                            onChange={(e) =>
+                              updateApiParam(
+                                endpoint.id,
+                                param.id,
+                                "value",
+                                e.target.value
+                              )
+                            }
+                            className="h-8 text-xs rounded-lg border-gray-300 focus:border-orange-500 focus:ring-orange-500"
+                          />
+                          <Select
+                            value={param.type}
+                            onValueChange={(value) =>
+                              updateApiParam(
+                                endpoint.id,
+                                param.id,
+                                "type",
+                                value
+                              )
+                            }
+                          >
+                            <SelectTrigger className="h-8 text-xs rounded-lg border-gray-300 focus:border-orange-500 focus:ring-orange-500">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="string">String</SelectItem>
+                              <SelectItem value="number">Number</SelectItem>
+                              <SelectItem value="boolean">Boolean</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <Button
+                          type="button"
+                          onClick={() => removeApiParam(endpoint.id, param.id)}
+                          className="h-8 w-8 p-0 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 
+                          text-white rounded-lg flex items-center justify-center shadow-sm hover:shadow-md
+                          transition-all duration-200 ease-out transform hover:scale-[1.05] active:scale-[0.95]
+                          focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 cursor-pointer"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    ))}
+
+                    {endpoint.apiParams.length === 0 && (
+                      <div className="text-center py-4 text-gray-500 text-xs">
+                        No parameters yet. Use JSON parser or add manually with
+                        "Add Param" button.
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        ))}
       </div>
 
       {/* Submit Button - Enhanced */}
@@ -307,10 +697,11 @@ export function CreateAgentForm({ onSubmit }: CreateAgentFormProps) {
           type="submit"
           disabled={isLoading}
           className="w-full h-12 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 
-          text-white font-semibold rounded-xl shadow-lg shadow-orange-500/25 hover:shadow-orange-500/40
-          transition-all duration-200 ease-out transform hover:scale-[1.02] active:scale-[0.98]
-          disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none
-          focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
+          text-white font-semibold rounded-xl shadow-lg shadow-orange-500/30 hover:shadow-xl hover:shadow-orange-500/40
+          transition-all duration-300 ease-out transform hover:scale-[1.02] active:scale-[0.98]
+          disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none
+          focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 cursor-pointer
+          relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-r before:from-white/10 before:to-transparent before:opacity-0 hover:before:opacity-100 before:transition-opacity before:duration-300"
         >
           {isLoading ? (
             <div className="flex items-center space-x-2">
@@ -319,9 +710,7 @@ export function CreateAgentForm({ onSubmit }: CreateAgentFormProps) {
             </div>
           ) : (
             <div className="flex items-center space-x-2">
-              <span className="w-5 h-5 bg-white/20 rounded-full flex items-center justify-center">
-                <span className="text-white text-xs">+</span>
-              </span>
+              <Sparkles className="w-5 h-5" />
               <span>Create Agent</span>
             </div>
           )}

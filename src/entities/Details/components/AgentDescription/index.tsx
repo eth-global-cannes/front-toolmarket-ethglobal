@@ -13,12 +13,12 @@ export function AgentDescription({ agent }: AgentDescriptionProps) {
       transition={{ duration: 0.4, delay: 0.3 }}
       className="space-y-4"
     >
-      <p className="text-gray-300 text-lg leading-relaxed">
+      <p className="text-gray-700 text-lg leading-relaxed font-medium">
         {agent.description}
       </p>
 
       {agent.longDescription && (
-        <p className="text-gray-400 leading-relaxed">{agent.longDescription}</p>
+        <p className="text-gray-600 leading-relaxed">{agent.longDescription}</p>
       )}
     </motion.div>
   );

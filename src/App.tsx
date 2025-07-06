@@ -1,9 +1,15 @@
-import { useState, Suspense } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { MarketplaceView } from "@/views/MarketplaceView";
 import { LazyAgentDetailsView } from "@/utils/lazy-loading";
 import { ComponentLoader } from "@/utils/lazy-loading";
+import { router, type Route } from "@/utils/router";
+import {
+  usePageMeta,
+  generatePageTitle,
+  generateMetaDescription,
+} from "@/hooks/usePageMeta";
 import type { Agent } from "@/types/agent";
-import type { ViewType } from "@/types/router";
+import type { ViewType, RouteState } from "@/types/router";
 
 // Sample data for agents with extended information
 const paidAgents: Agent[] = [
@@ -143,8 +149,46 @@ const otherAgents: Agent[] = [
 ];
 
 export const App = () => {
-  const [currentView, setCurrentView] = useState<ViewType>("marketplace");
+  const [routeState, setRouteState] = useState<RouteState>({
+    view: "marketplace",
+  });
   const [selectedAgent, setSelectedAgent] = useState<Agent | null>(null);
+
+  // Update page metadata based on current route and selected agent
+  usePageMeta({
+    title:
+      routeState.view === "agent-details" && selectedAgent
+        ? generatePageTitle(undefined, selectedAgent.title)
+        : generatePageTitle(),
+    description: generateMetaDescription(selectedAgent || undefined),
+    agent: selectedAgent || undefined,
+  });
+
+  // Initialize router and listen to route changes
+  useEffect(() => {
+    const unsubscribe = router.subscribe((route: Route) => {
+      const newState: RouteState = {
+        view: route.view as ViewType,
+      };
+
+      if (route.view === "agent-details" && route.params?.id) {
+        const agentId = parseInt(route.params.id, 10);
+        newState.agentId = agentId;
+
+        // Find agent by ID
+        const agent = [...paidAgents, ...otherAgents].find(
+          (a) => a.id === agentId
+        );
+        setSelectedAgent(agent || null);
+      } else {
+        setSelectedAgent(null);
+      }
+
+      setRouteState(newState);
+    });
+
+    return unsubscribe;
+  }, []);
 
   const handleSearch = (value: string) => {
     console.log("Searching for:", value);
@@ -152,22 +196,21 @@ export const App = () => {
   };
 
   const handleAgentClick = (agent: Agent) => {
-    setSelectedAgent(agent);
-    setCurrentView("agent-details");
+    const url = `/agent/${agent.id}`;
+    router.navigate(url);
   };
 
   const handleBackToMarketplace = () => {
-    setSelectedAgent(null);
-    setCurrentView("marketplace");
+    router.navigate("/");
   };
 
   // Router: Render current view
   const renderCurrentView = () => {
-    switch (currentView) {
+    switch (routeState.view) {
       case "agent-details":
         if (!selectedAgent) {
           // Fallback to marketplace if no agent selected
-          setCurrentView("marketplace");
+          router.navigate("/");
           return null;
         }
         return (

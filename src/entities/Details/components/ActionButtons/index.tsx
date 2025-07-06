@@ -1,8 +1,9 @@
-import { useState } from "react";
-import { Bookmark, Share2, Play, ShoppingCart } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Bookmark, Copy, Check, Play, ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { FeedbackModal } from "../FeedbackModal";
+import { addBookmark, removeBookmark, isBookmarked } from "@/utils/bookmarks";
 import type { Agent } from "@/types/agent";
 
 interface ActionButtonsProps {
@@ -10,15 +11,32 @@ interface ActionButtonsProps {
 }
 
 export function ActionButtons({ agent }: ActionButtonsProps) {
-  const [isBookmarked, setIsBookmarked] = useState(false);
+  const [bookmarked, setBookmarked] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  // Check if agent is bookmarked on mount
+  useEffect(() => {
+    setBookmarked(isBookmarked(agent.id));
+  }, [agent.id]);
 
   const handleBookmark = () => {
-    setIsBookmarked(!isBookmarked);
+    if (bookmarked) {
+      removeBookmark(agent.id);
+      setBookmarked(false);
+    } else {
+      addBookmark(agent);
+      setBookmarked(true);
+    }
   };
 
-  const handleShare = () => {
-    navigator.clipboard.writeText(window.location.href);
-    // You could add a toast notification here
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (error) {
+      console.error("Failed to copy URL:", error);
+    }
   };
 
   const handlePurchase = () => {
@@ -68,20 +86,24 @@ export function ActionButtons({ agent }: ActionButtonsProps) {
       <button
         onClick={handleBookmark}
         className={`p-3 rounded-xl border-2 transition-all duration-200 ${
-          isBookmarked
+          bookmarked
             ? "border-orange-500 bg-orange-500/10 text-orange-500"
             : "border-gray-600 hover:border-gray-500 text-gray-400 hover:text-gray-300"
         }`}
       >
-        <Bookmark className={`w-6 h-6 ${isBookmarked ? "fill-current" : ""}`} />
+        <Bookmark className={`w-6 h-6 ${bookmarked ? "fill-current" : ""}`} />
       </button>
 
-      {/* Share Button */}
+      {/* Copy URL Button */}
       <button
-        onClick={handleShare}
+        onClick={handleCopy}
         className="p-3 rounded-xl border-2 border-gray-600 hover:border-gray-500 text-gray-400 hover:text-gray-300 transition-all duration-200"
       >
-        <Share2 className="w-6 h-6" />
+        {copied ? (
+          <Check className="w-6 h-6 text-green-500" />
+        ) : (
+          <Copy className="w-6 h-6" />
+        )}
       </button>
     </motion.div>
   );

@@ -28,16 +28,16 @@ export function FeedbackModal() {
           Add Feedback
         </Button>
       </DialogTrigger>
-      <DialogContent className="bg-gray-900 border-gray-700 text-white">
+      <DialogContent className="bg-white border-orange-200 text-gray-900">
         <DialogHeader>
-          <DialogTitle className="text-xl font-bold">
+          <DialogTitle className="text-xl font-bold text-gray-900">
             Share Your Experience
           </DialogTitle>
         </DialogHeader>
         <div className="space-y-4">
           {/* Rating Selection */}
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
               Your Rating
             </label>
             <div className="flex space-x-1">
@@ -45,13 +45,13 @@ export function FeedbackModal() {
                 <button
                   key={star}
                   onClick={() => setUserRating(star)}
-                  className="focus:outline-none"
+                  className="focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 rounded"
                 >
                   <Star
                     className={`w-8 h-8 transition-colors ${
                       star <= userRating
-                        ? "text-yellow-400 fill-yellow-400"
-                        : "text-gray-600 hover:text-yellow-400"
+                        ? "text-yellow-500 fill-yellow-500"
+                        : "text-gray-300 hover:text-yellow-500"
                     }`}
                   />
                 </button>
@@ -61,14 +61,14 @@ export function FeedbackModal() {
 
           {/* Feedback Text */}
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
               Your Feedback
             </label>
             <Textarea
               value={feedback}
               onChange={(e) => setFeedback(e.target.value)}
               placeholder="Share your experience with this AI agent..."
-              className="bg-gray-800 border-gray-600 text-white placeholder-gray-400 min-h-[120px]"
+              className="bg-white border-orange-200 text-gray-900 placeholder-gray-500 min-h-[120px] focus:border-orange-500 focus:ring-orange-500"
             />
           </div>
 
@@ -76,7 +76,7 @@ export function FeedbackModal() {
           <Button
             onClick={handleFeedbackSubmit}
             disabled={!feedback.trim() || userRating === 0}
-            className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 rounded-xl"
+            className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 rounded-xl disabled:bg-gray-300 disabled:text-gray-500"
           >
             Submit Feedback
           </Button>

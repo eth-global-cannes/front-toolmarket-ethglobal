@@ -11,6 +11,8 @@
   },
   "dependencies": {
     "@hookform/resolvers": "3.9.0",
+    "@onflow/fcl": "^1.19.0",
+    "@onflow/kit": "^0.7.0",
     "@radix-ui/react-dialog": "^1.1.14",
     "@radix-ui/react-popover": "^1.1.14",
     "@radix-ui/react-select": "^2.2.5",

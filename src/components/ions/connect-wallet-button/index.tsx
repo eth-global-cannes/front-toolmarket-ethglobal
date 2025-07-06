@@ -1,3 +1,7 @@
+"use client";
+
+import * as fcl from "@onflow/fcl";
+import { useFlowCurrentUser } from "@onflow/kit";
 import { Popover, PopoverContent, PopoverTrigger } from "@radix-ui/react-popover";
 import { Loader2, LogOutIcon, WalletIcon } from "lucide-react";
 import { useState } from 'react';
@@ -6,19 +10,28 @@ import { useState } from 'react';
 //   environment: 'testnet',
 // });
 
+fcl.config({
+  "discovery.wallet": "https://fcl-discovery.onflow.org/testnet/authn",
+  "accessNode.api": "https://rest-testnet.onflow.org",
+  flowNetwork: "testnet",
+});
+
 export const ConnectWalletButton = () => {
+  const { authenticate, user } = useFlowCurrentUser();
   const [address, setAddress] = useState<string | null>(localStorage.getItem("@tl-market:address") || null);
   const [loading, setLoading] = useState(false);
 
   const handleConnect = async () => {
     setLoading(true);
+    await authenticate();
+    setLoading(false);
 
-    setTimeout(() => {
-      // setAddress(client.wallet.user.address);
-      setLoading(false);
-      setAddress("0x41754fAc2706221470ef7Fa4028680FCEA14fEd0");
-      localStorage.setItem("@tl-market:address", "0x41754fAc2706221470ef7Fa4028680FCEA14fEd0");
-    }, 4000);
+    // setTimeout(() => {
+    //   // setAddress(client.wallet.user.address);
+    //   setLoading(false);
+    //   setAddress("0x41754fAc2706221470ef7Fa4028680FCEA14fEd0");
+    //   localStorage.setItem("@tl-market:address", "0x41754fAc2706221470ef7Fa4028680FCEA14fEd0");
+    // }, 4000);
   };
 
   const handleLogout = () => {
@@ -26,7 +39,7 @@ export const ConnectWalletButton = () => {
     setAddress(null);
   };
 
-  if (address) {
+  if (user && false) {
     return (
       <Popover>
         <PopoverTrigger asChild>
@@ -37,7 +50,7 @@ export const ConnectWalletButton = () => {
             disabled={loading}
           >
             <WalletIcon className="w-4 h-4" size={16} strokeWidth={2.5} />
-            <span className="flex-1 max-w-32 truncate text-ellipsis">{address}</span>
+            <span className="flex-1 max-w-32 truncate text-ellipsis">{user.addr}</span>
           </button>
         </PopoverTrigger>
         <PopoverContent className="bg-white text-black border border-neutral-300 rounded-lg mt-4 w-40 shadow-md" align="start">

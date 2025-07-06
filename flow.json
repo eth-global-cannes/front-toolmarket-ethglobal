@@ -1,0 +1,39 @@
+{
+	"contracts": {
+		"Agents": {
+			"source": "cadence/contracts/agents.cdc",
+			"aliases": {
+				"testing": "0000000000000008"
+			}
+		}
+	},
+	"networks": {
+		"emulator": "127.0.0.1:3569",
+		"mainnet": "access.mainnet.nodes.onflow.org:9000",
+		"testing": "127.0.0.1:3569",
+		"testnet": "access.devnet.nodes.onflow.org:9000"
+	},
+	"accounts": {
+		"emulator-account": {
+			"address": "38368e9101b8fa59",
+			"key": {
+				"type": "file",
+				"location": "troccoliagent003.pkey"
+			}
+		},
+		"troccoliagent003": {
+			"address": "38368e9101b8fa59",
+			"key": {
+				"type": "file",
+				"location": "troccoliagent003.pkey"
+			}
+		}
+	},
+	"deployments": {
+		"testnet": {
+			"emulator-account": [
+				"Agents"
+			]
+		}
+	}
+}

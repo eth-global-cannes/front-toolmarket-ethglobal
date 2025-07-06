@@ -1,5 +1,6 @@
 import type { Agent } from "@/types/agent";
 import { useFlowQuery } from "@onflow/kit";
+import { useNavigate } from "@tanstack/react-router";
 import { Bookmark, CreditCard, Users } from "lucide-react";
 import { useState } from "react";
 import { AgentCard } from "../AgentCard";
@@ -27,7 +28,9 @@ export function TabsWithBookmarks({
   bookmarkedAgents,
   onAgentClick,
 }: TabsWithBookmarksProps) {
-  const { data, isLoading, error, refetch } = useFlowQuery({
+  const navigate = useNavigate();
+
+  const { data } = useFlowQuery({
     cadence: `
    import "Agents"
 
@@ -38,10 +41,20 @@ fun main(): &[Agents.Agent] {
     `,
     // args: (arg, t) => [arg(1, t.Int), arg(2, t.Int)],
     query: { staleTime: 10000 },
-  })
+  });
+
   console.log(data);
-  const agents = data as Agent[] || [];
+  const agents = (data as Agent[]) || [];
   const [activeTab, setActiveTab] = useState<TabId>("paid");
+
+  const handleAgentClick = (agent: Agent) => {
+    // Call the parent's onAgentClick if provided
+    if (onAgentClick) {
+      onAgentClick(agent);
+    }
+    // Navigate to agent details
+    navigate({ to: "/agents/$agent", params: { agent: String(agent.id) } });
+  };
 
   const baseTabs: TabConfig[] = [
     {
@@ -181,7 +194,7 @@ fun main(): &[Agents.Agent] {
               <AgentCard
                 key={`${activeTab}-${agent.id}`}
                 agent={agent}
-                onClick={() => onAgentClick(agent)}
+                onClick={() => handleAgentClick(agent)}
               />
             ))}
           </div>

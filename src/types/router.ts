@@ -1,6 +1,6 @@
 import type { Agent } from "./agent";
 
-export type ViewType = "marketplace" | "agent-details";
+export type ViewType = "marketplace" | "marketplace";
 
 export interface RouteState {
   view: ViewType;

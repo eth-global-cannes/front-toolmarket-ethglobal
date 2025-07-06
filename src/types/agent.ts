@@ -1,16 +1,16 @@
 export interface Agent {
-  uuid: string;
-  id: number;
-  imageUrl: string;
+  id: string | number;
   name: string;
+  title: string;
   description: string;
-  note: number;
-  // votes: number;
-  price?: string;
-  // type?: string;
-  // developer?: string;
-  // releaseDate?: string;
-  // category?: string;
-  // longDescription?: string;
-  // isPurchased?: boolean;
+  image: string;
+  rating: number;
+  votes: number;
+  price: string;
+  type: string;
+  developer: string;
+  releaseDate: string;
+  category: string;
+  isPurchased: boolean;
+  longDescription: string;
 }

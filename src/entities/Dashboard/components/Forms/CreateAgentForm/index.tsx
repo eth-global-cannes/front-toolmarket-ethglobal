@@ -277,8 +277,8 @@ export function CreateAgentForm({ onSubmit, onSuccess }: CreateAgentFormProps) {
             typeof value === "number"
               ? "number"
               : typeof value === "boolean"
-              ? "boolean"
-              : "string",
+                ? "boolean"
+                : "string",
         })
       );
 

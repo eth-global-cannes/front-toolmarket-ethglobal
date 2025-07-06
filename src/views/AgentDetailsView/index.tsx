@@ -5,13 +5,16 @@ import { AgentImage } from "@/entities/Details/components/AgentImage";
 import { AgentInfo } from "@/entities/Details/components/AgentInfo";
 import { Header } from "@/entities/Details/components/Header";
 import { useFlowQuery } from "@onflow/kit";
+import { useNavigate } from "@tanstack/react-router";
 
 interface AgentDetailsViewProps {
-  onBack: () => void;
+  onBack?: () => void;
 }
 
 export function AgentDetailsView({ onBack }: AgentDetailsViewProps) {
-const { data, isLoading, error, refetch } = useFlowQuery({
+  const navigate = useNavigate();
+
+  const { data, isLoading } = useFlowQuery({
     cadence: `
    import "Agents"
 
@@ -22,9 +25,17 @@ fun main(): &[Agents.Agent] {
     `,
     // args: (arg, t) => [arg(1, t.Int), arg(2, t.Int)],
     query: { staleTime: 10000 },
-  })
+  });
 
-  const agent = data ? data[0] : null;
+  const agent = data && Array.isArray(data) && data.length > 0 ? data[0] : null;
+
+  const handleBack = () => {
+    if (onBack) {
+      onBack();
+    } else {
+      navigate({ to: "/" });
+    }
+  };
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -33,7 +44,7 @@ fun main(): &[Agents.Agent] {
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-orange-50/30 text-gray-900">
       {/* Header with Back Button */}
-      <Header onBack={onBack} />
+      <Header onBack={handleBack} />
 
       <div className="relative px-4 py-6 sm:px-6 lg:px-8 max-w-7xl mx-auto">
         {/* Subtle background pattern */}

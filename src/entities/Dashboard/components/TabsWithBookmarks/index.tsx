@@ -29,6 +29,7 @@ export function TabsWithBookmarks({
 }: TabsWithBookmarksProps) {
   const navigate = useNavigate();
   const { data, isLoading, error, refetch } = useFlowQuery({
+
     cadence: `
    import "Agents"
 
@@ -39,10 +40,20 @@ fun main(): &[Agents.Agent] {
     `,
     // args: (arg, t) => [arg(1, t.Int), arg(2, t.Int)],
     query: { staleTime: 10000 },
-  })
+  });
+
   console.log(data);
-  const agents = data as Agent[] || [];
+  const agents = (data as Agent[]) || [];
   const [activeTab, setActiveTab] = useState<TabId>("paid");
+
+  const handleAgentClick = (agent: Agent) => {
+    // Call the parent's onAgentClick if provided
+    if (onAgentClick) {
+      onAgentClick(agent);
+    }
+    // Navigate to agent details
+    navigate({ to: "/agents/$agent", params: { agent: String(agent.id) } });
+  };
 
   const baseTabs: TabConfig[] = [
     {
@@ -189,7 +200,8 @@ fun main(): &[Agents.Agent] {
               <AgentCard
                 key={`${activeTab}-${agent.id}`}
                 agent={agent}
-                onClick={onAgentClick}
+                onClick={() => handleAgentClick(agent)}
+
               />
             ))}
           </div>

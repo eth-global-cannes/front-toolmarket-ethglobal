@@ -16,7 +16,7 @@ export class Router {
   constructor() {
     // Define routes
     this.routes.set("/", "marketplace");
-    this.routes.set("/agent/:id", "agent-details");
+    this.routes.set("/agent/:id", "marketplace");
 
     // Listen to browser navigation
     window.addEventListener("popstate", this.handlePopState.bind(this));

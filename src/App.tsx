@@ -226,9 +226,9 @@ export const App = () => {
       default:
         return (
           <WalletAccountProvider>
-          <MarketplaceView
-            paidAgents={paidAgents}
-            otherAgents={otherAgents}
+            <MarketplaceView
+              paidAgents={paidAgents}
+              otherAgents={otherAgents}
               onAgentClick={handleAgentClick}
               onSearch={handleSearch}
             />

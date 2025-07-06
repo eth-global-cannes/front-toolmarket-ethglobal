@@ -9,8 +9,11 @@ import {
 } from "@/components/ui/dialog";
 import { PlusIcon } from "lucide-react";
 import { CreateAgentForm } from "../Forms/CreateAgentForm";
+import { useState } from "react";
 
 export function Header() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const handleCreateAgent = (data: {
     image: string;
     name: string;
@@ -18,7 +21,16 @@ export function Header() {
     type: string;
     price: string;
     url: string;
-    toolcalls: string;
+    endpoints: Array<{
+      id: string;
+      endpoint: string;
+      apiParams: Array<{
+        id: string;
+        key: string;
+        value: string;
+        type: "string" | "number" | "boolean";
+      }>;
+    }>;
   }) => {
     console.log("Creating agent:", data);
     // Implement agent creation logic here
@@ -58,7 +70,7 @@ export function Header() {
             <ConnectWalletButton />
 
             {/* Create Agent Button - Enhanced */}
-            <Dialog>
+            <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
               <DialogTrigger asChild>
                 <button
                   className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 
@@ -88,7 +100,10 @@ export function Header() {
                   </p>
                 </DialogHeader>
                 <div className="px-4 pb-4 sm:px-6 sm:pb-6 max-h-[60vh] sm:max-h-[70vh] overflow-y-auto custom-scrollbar">
-                  <CreateAgentForm onSubmit={handleCreateAgent} />
+                  <CreateAgentForm
+                    onSubmit={handleCreateAgent}
+                    onSuccess={() => setIsModalOpen(false)}
+                  />
                 </div>
               </DialogContent>
             </Dialog>

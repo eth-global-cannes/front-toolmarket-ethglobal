@@ -1,9 +1,9 @@
-import { Star } from "lucide-react";
-import { motion } from "framer-motion";
-import { useState } from "react";
-import type { Agent } from "@/types/agent";
-import { ReviewsModal } from "../ReviewsModal";
 import { getAverageRating, getReviewCount } from "@/data/mockReviews";
+import type { Agent } from "@/types/agent";
+import { motion } from "framer-motion";
+import { Star } from "lucide-react";
+import { useState } from "react";
+import { ReviewsModal } from "../ReviewsModal";
 
 interface AgentInfoProps {
   agent: Agent;
@@ -27,7 +27,7 @@ export function AgentInfo({ agent }: AgentInfoProps) {
       transition={{ duration: 0.4, delay: 0.1 }}
     >
       <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-2">
-        {agent.title}
+        {agent.name}
       </h1>
 
       {/* Rating */}
@@ -57,7 +57,7 @@ export function AgentInfo({ agent }: AgentInfoProps) {
 
       {/* Developer */}
       <div className="text-lg text-gray-600 mb-6 font-medium">
-        {agent.developer || "AI Developer"}
+        {agent?.developer || "AI Developer"}
       </div>
 
       {/* Reviews Modal */}

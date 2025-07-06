@@ -1,6 +1,6 @@
-import { motion } from "framer-motion";
 import { OptimizedImage } from "@/components/ui/optimized-image";
 import type { Agent } from "@/types/agent";
+import { motion } from "framer-motion";
 
 interface AgentImageProps {
   agent: Agent;
@@ -16,8 +16,8 @@ export function AgentImage({ agent }: AgentImageProps) {
         className="relative aspect-square rounded-2xl overflow-hidden bg-gradient-to-br from-orange-100/50 to-orange-200/30 border border-orange-200/50 shadow-lg shadow-orange-500/10"
       >
         <OptimizedImage
-          src={agent.image}
-          alt={agent.title}
+          src={agent.image || 'https://i.imgur.com/wfIPt2l.jpeg'}
+          alt={agent.title || 'Trading Agent'}
           width={400}
           height={400}
           className="w-full h-full"

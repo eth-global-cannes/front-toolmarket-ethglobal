@@ -1,17 +1,35 @@
-import type { Agent } from "@/types/agent";
-import { Header } from "@/entities/Details/components/Header";
-import { AgentImage } from "@/entities/Details/components/AgentImage";
-import { AgentInfo } from "@/entities/Details/components/AgentInfo";
 import { ActionButtons } from "@/entities/Details/components/ActionButtons";
 import { AgentDescription } from "@/entities/Details/components/AgentDescription";
 import { AgentDetails } from "@/entities/Details/components/AgentDetails";
+import { AgentImage } from "@/entities/Details/components/AgentImage";
+import { AgentInfo } from "@/entities/Details/components/AgentInfo";
+import { Header } from "@/entities/Details/components/Header";
+import { useFlowQuery } from "@onflow/kit";
 
 interface AgentDetailsViewProps {
-  agent: Agent;
   onBack: () => void;
 }
 
-export function AgentDetailsView({ agent, onBack }: AgentDetailsViewProps) {
+export function AgentDetailsView({ onBack }: AgentDetailsViewProps) {
+const { data, isLoading, error, refetch } = useFlowQuery({
+    cadence: `
+   import "Agents"
+
+access(all)
+fun main(): &[Agents.Agent] {
+  return Agents.getAgents()
+}
+    `,
+    // args: (arg, t) => [arg(1, t.Int), arg(2, t.Int)],
+    query: { staleTime: 10000 },
+  })
+
+  const agent = data ? data[0] : null;
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-orange-50/30 text-gray-900">
       {/* Header with Back Button */}

@@ -1,11 +1,12 @@
-import { Suspense, useState, useEffect } from "react";
+import { SkipLink } from "@/components/ui/skip-link";
 import { Header } from "@/entities/Dashboard/components/Header";
 import { Search } from "@/entities/Dashboard/components/Search";
 import { TabsWithBookmarks } from "@/entities/Dashboard/components/TabsWithBookmarks";
-import { LazyFooter, ComponentLoader } from "@/utils/lazy-loading";
-import { SkipLink } from "@/components/ui/skip-link";
-import { getBookmarkedAgents, bookmarkToAgent } from "@/utils/bookmarks";
 import type { Agent } from "@/types/agent";
+import { bookmarkToAgent, getBookmarkedAgents } from "@/utils/bookmarks";
+import { ComponentLoader, LazyFooter } from "@/utils/lazy-loading";
+import { useNavigate } from "@tanstack/react-router";
+import { Suspense, useEffect, useState } from "react";
 
 interface MarketplaceViewProps {
   paidAgents: Agent[];
@@ -17,10 +18,10 @@ interface MarketplaceViewProps {
 export function MarketplaceView({
   paidAgents,
   otherAgents,
-  onAgentClick,
   onSearch,
 }: MarketplaceViewProps) {
   const [bookmarkedAgents, setBookmarkedAgents] = useState<Agent[]>([]);
+  const navigate = useNavigate();
 
   // Load bookmarked agents from localStorage
   useEffect(() => {
@@ -40,6 +41,14 @@ export function MarketplaceView({
     window.addEventListener("focus", handleFocus);
     return () => window.removeEventListener("focus", handleFocus);
   }, []);
+
+  const onAgentClick = () => {
+    alert("clicked");
+    navigate({
+      to: "/agents/$agent",
+      params: { agent: "3" },
+    });
+  };
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-orange-50 via-white to-orange-50/30">
